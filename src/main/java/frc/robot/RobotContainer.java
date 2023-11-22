@@ -3,14 +3,15 @@ package frc.robot;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.SpinAzimuthMotorsCommand;
+import frc.robot.commands.SpinDriveMotorsCommand;
+import frc.robot.subsystems.DriveSubsystem;
 import org.slf4j.Logger;
 import org.usfirst.frc3620.logger.EventLogging;
 import org.usfirst.frc3620.logger.LogCommand;
 import org.usfirst.frc3620.logger.EventLogging.Level;
 import org.usfirst.frc3620.misc.CANDeviceFinder;
 
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -37,7 +38,7 @@ public class RobotContainer {
   public static PneumaticsModuleType pneumaticModuleType = null;
 
   // subsystems here
-  private static ExampleSubsystem exampleSubsystem;
+  private static DriveSubsystem driveSubsystem;
 
   // joysticks here....
   public static Joystick driverJoystick;
@@ -73,7 +74,7 @@ public class RobotContainer {
   }
 
   private void makeSubsystems() {
-    exampleSubsystem = new ExampleSubsystem();
+    driveSubsystem = new DriveSubsystem();
   }
 
   /**
@@ -92,14 +93,15 @@ public class RobotContainer {
   }
 
   private void setupSmartDashboardCommands() {
-    // SmartDashboard.putData(new xxxxCommand());
+    SmartDashboard.putData(new SpinDriveMotorsCommand(driveSubsystem));
+    SmartDashboard.putData(new SpinAzimuthMotorsCommand(driveSubsystem));
   }
 
   SendableChooser<Command> chooser = new SendableChooser<>();
   public void setupAutonomousCommands() {
     SmartDashboard.putData("Auto mode", chooser);
 
-    chooser.addOption("Example Command", new ExampleCommand(exampleSubsystem));
+    chooser.addOption("Do nothing", new LogCommand("Autonomous started"));
   }
 
   /**

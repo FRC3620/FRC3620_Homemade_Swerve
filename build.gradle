@@ -1,8 +1,8 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2023.4.2"
+    id "edu.wpi.first.GradleRIO" version "2023.4.3"
     // FRC3620 ****************************************************************
-    id "com.gorylenko.gradle-git-properties" version "2.3.2"
+    id "com.gorylenko.gradle-git-properties" version "2.4.1"
     // later:
     // id 'com.diffplug.spotless' version '6.12.0'
     // ************************************************************************

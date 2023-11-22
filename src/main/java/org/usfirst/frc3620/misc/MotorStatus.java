@@ -4,7 +4,7 @@
 
 package org.usfirst.frc3620.misc;
 
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
@@ -13,101 +13,105 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /** Add your docs here. */
 public class MotorStatus {
 
-    String name;
-    double requestedRPM = -1;
-    double requestedSensorVelocity = -1;
-    double actualRPM = -1;
-    double actualSensorVelocity = -1;
-    double statorCurrent = -1;
-    double supplyCurrent = -1;
-    double appliedPower = -1;
+  String name;
 
-    public MotorStatus(String _name) {
-      this.name = _name;
-    }
+  // only one of these will be set
+  BaseTalon talon;
+  CANSparkMax sparkMax;
 
-    public String getName() {
-      return name;
-    }
+  double requestedRPM = -1;
+  double requestedSensorVelocity = -1;
+  double actualRPM = -1;
+  double actualSensorVelocity = -1;
+  double actualSensorPosition = -1;
+  double statorCurrent = -1;
+  double supplyCurrent = -1;
+  double appliedPower = -1;
 
-    public double getRequestedRPM() {
-      return requestedRPM;
-    }
+  public MotorStatus(String _name, BaseTalon _talon) {
+    this.name = _name;
+    this.talon = _talon;
+  }
 
-    public double getRequestedSensorVelocity() {
-      return requestedSensorVelocity;
-    }
+  public MotorStatus(String _name, CANSparkMax _sparkMax) {
+    this.name = _name;
+    this.sparkMax = _sparkMax;
+  }
 
-    public double getActualSensorVelocity() {
-      return actualSensorVelocity;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public double getActualRPM() {
-      return actualRPM;
-    }
+  public double getRequestedRPM() {
+    return requestedRPM;
+  }
 
-    public double getStatorCurrent() {
-      return statorCurrent;
-    }
+  public double getRequestedSensorVelocity() {
+    return requestedSensorVelocity;
+  }
 
-    public double getSupplyCurrent() {
-      return supplyCurrent;
-    }
+  public double getActualSensorVelocity() {
+    return actualSensorVelocity;
+  }
 
-    public double getAppliedPower() {
-      return appliedPower;
-    }
+  public double getActualSensorPosition() {
+    return actualSensorPosition;
+  }
 
-    public void setRequestedRPM(double r){
-        requestedRPM = r;
-        SmartDashboard.putNumber(name + ".rpm.target", r);
-    }
+  public double getActualRPM() {
+    return actualRPM;
+  }
 
-    public void setRequestedSensorVelocity(double v) {
-        requestedSensorVelocity = v;
-        SmartDashboard.putNumber(name + ".velocity.target", v);
-    }
+  public double getStatorCurrent() {
+    return statorCurrent;
+  }
 
-  public void gatherActuals(TalonFX m, String prefix) {
-    if (m != null) {
-      actualSensorVelocity = m.getSelectedSensorVelocity();
+  public double getSupplyCurrent() {
+    return supplyCurrent;
+  }
+
+  public double getAppliedPower() {
+    return appliedPower;
+  }
+
+  public void setRequestedRPM(double r){
+      requestedRPM = r;
+      SmartDashboard.putNumber(name + ".rpm.target", r);
+  }
+
+  public void setRequestedSensorVelocity(double v) {
+      requestedSensorVelocity = v;
+      SmartDashboard.putNumber(name + ".velocity.target", v);
+  }
+
+  public void gatherActuals() {
+    if (talon != null) {
+      actualSensorPosition = talon.getSelectedSensorPosition();
+      actualSensorVelocity = talon.getSelectedSensorVelocity();
       actualRPM = actualSensorVelocity * 600 / 2048;
-      statorCurrent = m.getStatorCurrent();
-      supplyCurrent = m.getSupplyCurrent();
-      appliedPower = m.getMotorOutputPercent() / 100.0;
-    } else {
-      actualSensorVelocity = -1;
-      actualRPM = -1;
-      statorCurrent = -1;
-      supplyCurrent = -1;
-      appliedPower = -1;
-    }
-    updateDashboard(prefix);
-  }
-
-  void updateDashboard(String prefix) {
-    SmartDashboard.putNumber(prefix + ".velocity.actual", actualSensorVelocity);
-    SmartDashboard.putNumber(prefix + ".rpm.actual", actualRPM);
-    SmartDashboard.putNumber(prefix + ".current.stator", statorCurrent);
-    SmartDashboard.putNumber(prefix + ".current.supply", supplyCurrent);
-    SmartDashboard.putNumber(prefix + ".applied.power", appliedPower);
-  }
-
-  public void gatherActuals(CANSparkMax m, String prefix) {
-    if (m != null) {
-      RelativeEncoder encoder = m.getEncoder();
+      statorCurrent = talon.getStatorCurrent();
+      supplyCurrent = talon.getSupplyCurrent();
+      appliedPower = talon.getMotorOutputPercent() / 100.0;
+    } else if (sparkMax != null) {
+      RelativeEncoder encoder = sparkMax.getEncoder();
+      actualSensorPosition = encoder.getPosition();
       actualSensorVelocity = encoder.getVelocity();
       actualRPM = actualSensorVelocity;
-      statorCurrent = m.getOutputCurrent();
+      statorCurrent = sparkMax.getOutputCurrent();
       supplyCurrent = -1;
-      appliedPower = m.getAppliedOutput();
+      appliedPower = sparkMax.getAppliedOutput();
     } else {
-      actualSensorVelocity = -1;
-      actualRPM = -1;
-      statorCurrent = -1;
-      supplyCurrent = -1;
-      appliedPower = -1;
+      // everything got set at creation
     }
-    updateDashboard(prefix);
+    updateDashboard();
+  }
+
+  void updateDashboard() {
+    SmartDashboard.putNumber(name + ".position.actual", actualSensorPosition);
+    SmartDashboard.putNumber(name + ".velocity.actual", actualSensorVelocity);
+    SmartDashboard.putNumber(name + ".rpm.actual", actualRPM);
+    SmartDashboard.putNumber(name + ".current.stator", statorCurrent);
+    SmartDashboard.putNumber(name + ".current.supply", supplyCurrent);
+    SmartDashboard.putNumber(name + ".applied.power", appliedPower);
   }
 }
