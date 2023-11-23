@@ -2,8 +2,10 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.github.meanbeanlib.mirror.Executables;
 import com.revrobotics.CANSparkMax;
 
+import org.usfirst.frc3620.misc.DataExtractorToNetworkTables;
 import org.usfirst.frc3620.misc.MotorStatus;
 import org.usfirst.frc3620.misc.SwerveModuleId;
 
@@ -14,15 +16,49 @@ public class SwerveModule {
   CANSparkMax driveMotor;
   TalonSRX azimuthMotor;
   MotorStatus driveMotorStatus, azimuthMotorStatus;
+  DataExtractorToNetworkTables<MotorStatus> driveMotorStatusExtractor, azimuthMotorStatusExtractor;
 
   public SwerveModule (SwerveModuleId id, CANSparkMax driveMotor, TalonSRX azimuthMotor) {
     this.id = id;
-    this.name = id.getName();
+    this.name = id.name();
     this.driveMotor = driveMotor;
-    this.driveMotorStatus = new MotorStatus("swerve." + id + ".drive", driveMotor);
+    this.driveMotorStatus = new MotorStatus(this.name, driveMotor);
     this.azimuthMotor = azimuthMotor;
-    this.azimuthMotorStatus = new MotorStatus("swerve." + id + ".azimuth", azimuthMotor);
+    this.azimuthMotorStatus = new MotorStatus(this.name, azimuthMotor);
+
+    driveMotorStatusExtractor = new DataExtractorToNetworkTables<>();
+    driveMotorStatusExtractor.addPrefix("/Swerve/");
+    driveMotorStatusExtractor.addMiddle(".drive");
+    setupStatusExtractor(driveMotorStatusExtractor);
+  
+    azimuthMotorStatusExtractor = new DataExtractorToNetworkTables<>();
+    azimuthMotorStatusExtractor.addPrefix("/Swerve/");
+    azimuthMotorStatusExtractor.addMiddle(".azimuth");
+    setupStatusExtractor(azimuthMotorStatusExtractor);
   }
+
+  void setupStatusExtractor(DataExtractorToNetworkTables<MotorStatus> x) {
+    x.addField(Executables.findMethod(MotorStatus::getActualSensorVelocity));
+    // x.addField(Executables.findMethod(MotorStatus::getActualSensorPosition));
+    x.addField(Executables.findMethod(MotorStatus::getStatorCurrent));
+    x.addField(Executables.findMethod(MotorStatus::getAppliedPower));
+  }
+
+  /*
+   * 
+    driveMotorStatusExtractor.addField(y);
+    public void xxxxxxxx(MotorStatus motorStatus) {
+      SmartDashboard.putNumber(name + "/position.actual", actualSensorPosition);
+      SmartDashboard.putNumber(name + "/velocity.actual", actualSensorVelocity);
+      SmartDashboard.putNumber(name + "/rpm.actual", actualRPM);
+      SmartDashboard.putNumber(name + "/current.stator", statorCurrent);
+      SmartDashboard.putNumber(name + "/current.supply", supplyCurrent);
+      SmartDashboard.putNumber(name + "/applied.power", appliedPower);
+    }
+  
+    }
+
+   */
 
   public String getName() {
     return name;
@@ -71,5 +107,8 @@ public class SwerveModule {
   public void updateBasicDashboard() {
     driveMotorStatus.gatherActuals();
     azimuthMotorStatus.gatherActuals();
+    driveMotorStatusExtractor.extract(driveMotorStatus);
+    azimuthMotorStatusExtractor.extract(azimuthMotorStatus);
   }
+
 }

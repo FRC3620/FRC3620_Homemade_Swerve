@@ -1,17 +1,10 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package org.usfirst.frc3620.misc;
 
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-/** Add your docs here. */
-public class MotorStatus {
+public class MotorStatus implements NamedObject {
 
   String name;
 
@@ -50,6 +43,7 @@ public class MotorStatus {
     return requestedSensorVelocity;
   }
 
+  @NetworkTableEntryInformation(name = "velocity")
   public double getActualSensorVelocity() {
     return actualSensorVelocity;
   }
@@ -62,6 +56,7 @@ public class MotorStatus {
     return actualRPM;
   }
 
+  @NetworkTableEntryInformation(name = "current")
   public double getStatorCurrent() {
     return statorCurrent;
   }
@@ -70,18 +65,17 @@ public class MotorStatus {
     return supplyCurrent;
   }
 
+  @NetworkTableEntryInformation(name = "power")
   public double getAppliedPower() {
     return appliedPower;
   }
 
   public void setRequestedRPM(double r){
       requestedRPM = r;
-      SmartDashboard.putNumber(name + ".rpm.target", r);
   }
 
   public void setRequestedSensorVelocity(double v) {
       requestedSensorVelocity = v;
-      SmartDashboard.putNumber(name + ".velocity.target", v);
   }
 
   public void gatherActuals() {
@@ -103,15 +97,5 @@ public class MotorStatus {
     } else {
       // everything got set at creation
     }
-    updateDashboard();
-  }
-
-  void updateDashboard() {
-    SmartDashboard.putNumber(name + ".position.actual", actualSensorPosition);
-    SmartDashboard.putNumber(name + ".velocity.actual", actualSensorVelocity);
-    SmartDashboard.putNumber(name + ".rpm.actual", actualRPM);
-    SmartDashboard.putNumber(name + ".current.stator", statorCurrent);
-    SmartDashboard.putNumber(name + ".current.supply", supplyCurrent);
-    SmartDashboard.putNumber(name + ".applied.power", appliedPower);
   }
 }

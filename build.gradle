@@ -75,6 +75,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.lmax/disruptor
     implementation group: 'com.lmax', name: 'disruptor', version: '3.4.4'
 
+    implementation 'com.github.meanbeanlib:meanmirror:1.0.0'
+
     roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
     roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)
 

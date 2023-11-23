@@ -2,6 +2,9 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMaxLowLevel;
+
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.SwerveModule;
@@ -28,6 +31,8 @@ public class DriveSubsystem extends SubsystemBase {
     swerveRightBack = makeSwerveModule(shouldMakeAllCANDevices, SwerveModuleId.RB, 7, 8);
 
     swerveModules = new SwerveModule[] { swerveLeftFront, swerveRightFront, swerveLeftBack, swerveRightBack};
+
+    makeShuffleboardTab();
   }
 
   private SwerveModule makeSwerveModule (boolean needTolook, SwerveModuleId id, int driveMotorId, int azimuthMotorId) {
@@ -74,6 +79,11 @@ public class DriveSubsystem extends SubsystemBase {
     for (var s : swerveModules) {
       s.stopDriveMotor();
     }
+  }
+
+  void makeShuffleboardTab() {
+    // ShuffleboardTab tab = Shuffleboard.getTab("Swerve Modules");
+    // tab.
   }
 
 }
