@@ -6,12 +6,13 @@ package org.usfirst.frc3620.misc;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motorcontrol.can.BaseTalon;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 /** Add your docs here. */
 public class MotorSetup {
-    public static void resetMaxToKnownState(CANSparkMaxSendable x, boolean inverted) {
+    public static void resetMaxToKnownState(CANSparkMax x, boolean inverted) {
         // TODO set to factory default 
         x.setInverted(inverted);
         x.setIdleMode(IdleMode.kCoast);
@@ -20,7 +21,7 @@ public class MotorSetup {
         x.setSmartCurrentLimit(80);
     }
     
-    public static void resetTalonFXToKnownState(WPI_TalonFX m, InvertType invert) {
+    public static void resetTalonFXToKnownState(BaseTalon m, InvertType invert) {
         int kTimeoutMs = 0;
         m.configFactoryDefault();
         m.setInverted(invert);

@@ -1,11 +1,15 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.github.meanbeanlib.mirror.Executables;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import org.usfirst.frc3620.misc.DataExtractorToNetworkTables;
+import org.usfirst.frc3620.misc.MotorSetup;
 import org.usfirst.frc3620.misc.MotorStatus;
 import org.usfirst.frc3620.misc.SwerveModuleId;
 
@@ -23,8 +27,16 @@ public class SwerveModule {
     this.name = id.name();
     this.driveMotor = driveMotor;
     this.driveMotorStatus = new MotorStatus(this.name, driveMotor);
+    if (driveMotor != null) {
+      MotorSetup.resetMaxToKnownState(driveMotor, false);
+      driveMotor.setIdleMode(IdleMode.kBrake);
+    }
     this.azimuthMotor = azimuthMotor;
     this.azimuthMotorStatus = new MotorStatus(this.name, azimuthMotor);
+    if (azimuthMotor != null) {
+      MotorSetup.resetTalonFXToKnownState(azimuthMotor, InvertType.None);
+      azimuthMotor.setNeutralMode(NeutralMode.Brake);
+    }
 
     driveMotorStatusExtractor = new DataExtractorToNetworkTables<>();
     driveMotorStatusExtractor.addPrefix("swerve.");
