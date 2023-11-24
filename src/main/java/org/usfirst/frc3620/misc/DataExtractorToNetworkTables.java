@@ -6,7 +6,7 @@ public class DataExtractorToNetworkTables<T extends NamedObject> extends DataExt
 
     @Override
     public void place(String name, Object o) {
-        System.out.println ("putting " + o  + " to " + name);
+        //System.out.println ("putting " + o  + " to " + name);
         if (o instanceof Double) {
             SmartDashboard.putNumber(name, (Double) o);
         } else {

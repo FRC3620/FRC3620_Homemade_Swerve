@@ -27,12 +27,12 @@ public class SwerveModule {
     this.azimuthMotorStatus = new MotorStatus(this.name, azimuthMotor);
 
     driveMotorStatusExtractor = new DataExtractorToNetworkTables<>();
-    driveMotorStatusExtractor.addPrefix("/Swerve/");
+    driveMotorStatusExtractor.addPrefix("swerve.");
     driveMotorStatusExtractor.addMiddle(".drive");
     setupStatusExtractor(driveMotorStatusExtractor);
   
     azimuthMotorStatusExtractor = new DataExtractorToNetworkTables<>();
-    azimuthMotorStatusExtractor.addPrefix("/Swerve/");
+    azimuthMotorStatusExtractor.addPrefix("swerve.");
     azimuthMotorStatusExtractor.addMiddle(".azimuth");
     setupStatusExtractor(azimuthMotorStatusExtractor);
   }
