@@ -30,6 +30,8 @@ public class SwerveModule {
     if (driveMotor != null) {
       MotorSetup.resetMaxToKnownState(driveMotor, false);
       driveMotor.setIdleMode(IdleMode.kBrake);
+      driveMotor.getEncoder().setVelocityConversionFactor(1);
+      driveMotor.getEncoder().setPositionConversionFactor(1);
     }
     this.azimuthMotor = azimuthMotor;
     this.azimuthMotorStatus = new MotorStatus(this.name, azimuthMotor);
@@ -51,7 +53,7 @@ public class SwerveModule {
 
   void setupStatusExtractor(DataExtractorToNetworkTables<MotorStatus> x) {
     x.addField(Executables.findMethod(MotorStatus::getActualSensorVelocity));
-    // x.addField(Executables.findMethod(MotorStatus::getActualSensorPosition));
+    x.addField(Executables.findMethod(MotorStatus::getActualSensorPosition));
     x.addField(Executables.findMethod(MotorStatus::getStatorCurrent));
     x.addField(Executables.findMethod(MotorStatus::getAppliedPower));
   }
