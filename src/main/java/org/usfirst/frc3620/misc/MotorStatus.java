@@ -43,7 +43,7 @@ public class MotorStatus implements NamedObject {
     return requestedSensorVelocity;
   }
 
-  @NetworkTableEntryInformation(name = "velocity")
+  @TelemetryInformation(name = "velocity")
   public double getActualSensorVelocity() {
     return actualSensorVelocity;
   }
@@ -56,7 +56,7 @@ public class MotorStatus implements NamedObject {
     return actualRPM;
   }
 
-  @NetworkTableEntryInformation(name = "current")
+  @TelemetryInformation(name = "current")
   public double getStatorCurrent() {
     return statorCurrent;
   }
@@ -65,7 +65,7 @@ public class MotorStatus implements NamedObject {
     return supplyCurrent;
   }
 
-  @NetworkTableEntryInformation(name = "power")
+  @TelemetryInformation(name = "power")
   public double getAppliedPower() {
     return appliedPower;
   }

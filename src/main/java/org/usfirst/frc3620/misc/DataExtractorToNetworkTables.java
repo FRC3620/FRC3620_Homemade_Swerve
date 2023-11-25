@@ -4,6 +4,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DataExtractorToNetworkTables<T extends NamedObject> extends DataExtractor<T> {
 
+    public DataExtractorToNetworkTables(String name) {
+        super(name);
+    }
+
     @Override
     public void place(String name, Object o) {
         //System.out.println ("putting " + o  + " to " + name);

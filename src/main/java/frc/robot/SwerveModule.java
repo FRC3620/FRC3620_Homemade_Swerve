@@ -26,28 +26,26 @@ public class SwerveModule {
     this.id = id;
     this.name = id.name();
     this.driveMotor = driveMotor;
-    this.driveMotorStatus = new MotorStatus(this.name, driveMotor);
+    this.driveMotorStatus = new MotorStatus("swerve." + this.id + ".drive", driveMotor);
     if (driveMotor != null) {
-      MotorSetup.resetMaxToKnownState(driveMotor, false);
+      MotorSetup.resetSparkMaxToKnownState(driveMotor, false);
+      MotorSetup.setCurrentLimit(driveMotor, 20);
       driveMotor.setIdleMode(IdleMode.kBrake);
       driveMotor.getEncoder().setVelocityConversionFactor(1);
       driveMotor.getEncoder().setPositionConversionFactor(1);
     }
     this.azimuthMotor = azimuthMotor;
-    this.azimuthMotorStatus = new MotorStatus(this.name, azimuthMotor);
+    this.azimuthMotorStatus = new MotorStatus("swerve." + this.id + ".azimuth", azimuthMotor);
     if (azimuthMotor != null) {
-      MotorSetup.resetTalonFXToKnownState(azimuthMotor, InvertType.None);
+      MotorSetup.resetCANTalonToKnownState(azimuthMotor, false);
+      MotorSetup.setCurrentLimit(azimuthMotor, 20);
       azimuthMotor.setNeutralMode(NeutralMode.Brake);
     }
 
-    driveMotorStatusExtractor = new DataExtractorToNetworkTables<>();
-    driveMotorStatusExtractor.addPrefix("swerve.");
-    driveMotorStatusExtractor.addMiddle(".drive");
+    driveMotorStatusExtractor = new DataExtractorToNetworkTables<>(driveMotorStatus.getName());
     setupStatusExtractor(driveMotorStatusExtractor);
   
-    azimuthMotorStatusExtractor = new DataExtractorToNetworkTables<>();
-    azimuthMotorStatusExtractor.addPrefix("swerve.");
-    azimuthMotorStatusExtractor.addMiddle(".azimuth");
+    azimuthMotorStatusExtractor = new DataExtractorToNetworkTables<>(azimuthMotorStatus.getName());
     setupStatusExtractor(azimuthMotorStatusExtractor);
   }
 
@@ -57,22 +55,6 @@ public class SwerveModule {
     x.addField(Executables.findMethod(MotorStatus::getStatorCurrent));
     x.addField(Executables.findMethod(MotorStatus::getAppliedPower));
   }
-
-  /*
-   * 
-    driveMotorStatusExtractor.addField(y);
-    public void xxxxxxxx(MotorStatus motorStatus) {
-      SmartDashboard.putNumber(name + "/position.actual", actualSensorPosition);
-      SmartDashboard.putNumber(name + "/velocity.actual", actualSensorVelocity);
-      SmartDashboard.putNumber(name + "/rpm.actual", actualRPM);
-      SmartDashboard.putNumber(name + "/current.stator", statorCurrent);
-      SmartDashboard.putNumber(name + "/current.supply", supplyCurrent);
-      SmartDashboard.putNumber(name + "/applied.power", appliedPower);
-    }
-  
-    }
-
-   */
 
   public String getName() {
     return name;

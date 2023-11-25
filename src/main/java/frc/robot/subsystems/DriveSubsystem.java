@@ -79,6 +79,10 @@ public class DriveSubsystem extends SubsystemBase {
     }
   }
 
+  public SwerveModule[] getSwerveModules() {
+    return swerveModules;
+  }
+
   void makeShuffleboardTab() {
     // ShuffleboardTab tab = Shuffleboard.getTab("Swerve Modules");
     // tab.

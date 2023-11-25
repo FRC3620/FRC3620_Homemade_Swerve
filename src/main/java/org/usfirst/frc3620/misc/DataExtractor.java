@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 abstract public class DataExtractor<T extends NamedObject> {
-  String prefix = "", middle = "";
+  String name = "";
 
   static class MethodAndNames {
     Method method;
@@ -17,14 +17,8 @@ abstract public class DataExtractor<T extends NamedObject> {
     }
   }
 
-  public DataExtractor<T> addPrefix(String prefix) {
-    this.prefix = prefix;
-    return this;
-  }
-
-  public DataExtractor<T> addMiddle(String middle) {
-    this.middle = middle;
-    return this;
+  public DataExtractor (String name) {
+    this.name = name;
   }
 
   List<MethodAndNames> l = new ArrayList<>();
@@ -37,7 +31,7 @@ abstract public class DataExtractor<T extends NamedObject> {
     if (name == null) {
       name = method.getName();
 
-      NetworkTableEntryInformation anno = method.getAnnotation(NetworkTableEntryInformation.class);
+      TelemetryInformation anno = method.getAnnotation(TelemetryInformation.class);
 
       if (anno != null) {
         name = anno.name();
@@ -54,7 +48,7 @@ abstract public class DataExtractor<T extends NamedObject> {
       } catch (IllegalAccessException | InvocationTargetException e) {
         throw new RuntimeException(e);
       }
-      String fqName = prefix + object.getName() + "." + middle + "."+ supplier.suffix;
+      String fqName = name + "."+ supplier.suffix;
       fqName = fqName.replace("..", ".");
       place (fqName, x);
     }

@@ -38,7 +38,7 @@ public class RobotContainer {
   public static PneumaticsModuleType pneumaticModuleType = null;
 
   // subsystems here
-  private static DriveSubsystem driveSubsystem;
+  public static DriveSubsystem driveSubsystem;
 
   // joysticks here....
   public static Joystick driverJoystick;
