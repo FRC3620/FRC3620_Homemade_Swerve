@@ -56,16 +56,17 @@ public class MotorStatus implements NamedObject {
     return actualRPM;
   }
 
-  @TelemetryInformation(name = "current")
+  @TelemetryInformation(name = "statorCurrent")
   public double getStatorCurrent() {
     return statorCurrent;
   }
 
+  @TelemetryInformation(name = "supplyCurrent")
   public double getSupplyCurrent() {
     return supplyCurrent;
   }
 
-  @TelemetryInformation(name = "power")
+  @TelemetryInformation(name = "appliedPower")
   public double getAppliedPower() {
     return appliedPower;
   }

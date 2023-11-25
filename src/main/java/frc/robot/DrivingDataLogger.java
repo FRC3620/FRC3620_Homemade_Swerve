@@ -18,7 +18,7 @@ public class DrivingDataLogger {
 
     public static IFastDataLogger getDrivingDataLogger (String name, double length) {
         IFastDataLogger dataLogger = new FastDataLoggerCollections();
-        dataLogger.setInterval(0.0);
+        dataLogger.setInterval(0.1);
         dataLogger.setMaxLength(length);
         dataLogger.setFilename(name);
         Date timestamp = new Date();
@@ -40,6 +40,7 @@ public class DrivingDataLogger {
         addField(dataLogger, motorStatus, Executables.findMethod(MotorStatus::getActualSensorVelocity));
         addField(dataLogger, motorStatus, Executables.findMethod(MotorStatus::getActualSensorPosition));
         addField(dataLogger, motorStatus, Executables.findMethod(MotorStatus::getStatorCurrent));
+        addField(dataLogger, motorStatus, Executables.findMethod(MotorStatus::getSupplyCurrent));
         addField(dataLogger, motorStatus, Executables.findMethod(MotorStatus::getAppliedPower));
     }
 
