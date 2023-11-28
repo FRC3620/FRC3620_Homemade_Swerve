@@ -1,9 +1,11 @@
 package frc.robot;
 
 import com.github.meanbeanlib.mirror.Executables;
+
+import edu.wpi.first.wpilibj.PowerDistribution;
+
 import org.usfirst.frc3620.logger.FastDataLoggerCollections;
 import org.usfirst.frc3620.logger.IDataLoggerDataProvider;
-import org.usfirst.frc3620.logger.IFastDataLogger;
 import org.usfirst.frc3620.misc.MotorStatus;
 import org.usfirst.frc3620.misc.TelemetryInformation;
 
@@ -11,47 +13,52 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
 
-public class DrivingDataLogger {
-    public static IFastDataLogger getDrivingDataLogger (String name) {
-        return getDrivingDataLogger(name, 15.0);
-    }
+public class DrivingDataLogger extends FastDataLoggerCollections {
+    PowerDistribution pdp = new PowerDistribution();
 
-    public static IFastDataLogger getDrivingDataLogger (String name, double length) {
-        IFastDataLogger dataLogger = new FastDataLoggerCollections();
-        dataLogger.setInterval(0.1);
-        dataLogger.setMaxLength(length);
-        dataLogger.setFilename(name);
+    public DrivingDataLogger(String name, double length) {
+        super();
+
+        setInterval(0.1);
+        setMaxLength(length);
+        setFilename(name);
         Date timestamp = new Date();
-        dataLogger.setFilenameTimestamp(timestamp);
+        setFilenameTimestamp(timestamp);
 
-        dataLogger.addMetadata("timestamp", timestamp.toString());
+        addMetadata("timestamp", timestamp.toString());
+
+        addDataProvider("swerve.lf.drive.pdp", () -> pdp.getCurrent(13));
+        addDataProvider("swerve.rf.drive.pdp", () -> pdp.getCurrent(2));
+        addDataProvider("swerve.lb.drive.pdp", () -> pdp.getCurrent(14));
+        addDataProvider("swerve.rb.drive.pdp", () -> pdp.getCurrent(1));
+
+        addDataProvider("swerve.lf.azimuth.pdp", () -> pdp.getCurrent(12));
+        addDataProvider("swerve.rf.azimuth.pdp", () -> pdp.getCurrent(3));
+        addDataProvider("swerve.lb.azimuth.pdp", () -> pdp.getCurrent(15));
+        addDataProvider("swerve.rb.azimuth.pdp", () -> pdp.getCurrent(0));
 
         for (SwerveModule module : RobotContainer.driveSubsystem.getSwerveModules()) {
-            addMotor (dataLogger, module.driveMotorStatus);
-            addMotor (dataLogger, module.azimuthMotorStatus);
+            addMotor (module.driveMotorStatus);
+            addMotor (module.azimuthMotorStatus);
         }
-
-        return dataLogger;
     }
 
-    private DrivingDataLogger() {}
-
-    static void addMotor (IFastDataLogger dataLogger, MotorStatus motorStatus) {
-        addField(dataLogger, motorStatus, Executables.findMethod(MotorStatus::getActualSensorVelocity));
-        addField(dataLogger, motorStatus, Executables.findMethod(MotorStatus::getActualSensorPosition));
-        addField(dataLogger, motorStatus, Executables.findMethod(MotorStatus::getStatorCurrent));
-        addField(dataLogger, motorStatus, Executables.findMethod(MotorStatus::getSupplyCurrent));
-        addField(dataLogger, motorStatus, Executables.findMethod(MotorStatus::getAppliedPower));
+    void addMotor (MotorStatus motorStatus) {
+        addField(motorStatus, Executables.findMethod(MotorStatus::getActualSensorVelocity));
+        addField(motorStatus, Executables.findMethod(MotorStatus::getActualSensorPosition));
+        addField(motorStatus, Executables.findMethod(MotorStatus::getStatorCurrent));
+        addField(motorStatus, Executables.findMethod(MotorStatus::getSupplyCurrent));
+        addField(motorStatus, Executables.findMethod(MotorStatus::getAppliedPower));
     }
 
-    static void addField (IFastDataLogger datalogger, MotorStatus motorStatus, Method method) {
+    void addField (MotorStatus motorStatus, Method method) {
         String name = method.getName();
         TelemetryInformation anno = method.getAnnotation(TelemetryInformation.class);
         if (anno != null) {
             name = anno.name();
         }
         String fieldName = motorStatus.getName() + "." + name;
-        datalogger.addDataProvider(fieldName, new MotorStatusDataProvider(motorStatus, method));
+        addDataProvider(fieldName, new MotorStatusDataProvider(motorStatus, method));
     }
 
     static class MotorStatusDataProvider implements IDataLoggerDataProvider {

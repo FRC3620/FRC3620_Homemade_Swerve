@@ -30,7 +30,7 @@ public class SpinDriveMotorsCommand extends CommandBase {
     if (!shouldCollectEntry.exists()) shouldCollectEntry.set(false);
 
     if (shouldCollectEntry.get()) {
-      dataLogger = DrivingDataLogger.getDrivingDataLogger("driveMotors");
+      dataLogger = new DrivingDataLogger("driveMotors", 15);
       dataLogger.start();
     }
   }

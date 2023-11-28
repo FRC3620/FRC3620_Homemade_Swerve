@@ -30,7 +30,7 @@ public class SpinAzimuthMotorsCommand extends CommandBase {
     if (!shouldCollectEntry.exists()) shouldCollectEntry.set(false);
 
     if (shouldCollectEntry.get()) {
-      dataLogger = DrivingDataLogger.getDrivingDataLogger("azimuthMotors");
+      dataLogger = new DrivingDataLogger("azimuthMotors", 15);
       dataLogger.start();
     }
   }
